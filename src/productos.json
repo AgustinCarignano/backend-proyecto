@@ -1,0 +1,112 @@
+[
+  {
+    "id": 1,
+    "title": "Producto 1",
+    "description": "Primer producto",
+    "price": 200,
+    "thumbnail": ["Sin imagen"],
+    "code": "abc111",
+    "stock": 25,
+    "status": true,
+    "category": "Categoria 1"
+  },
+  {
+    "id": 2,
+    "title": "Producto 2",
+    "description": "Segundo producto",
+    "price": 150,
+    "thumbnail": ["Sin imagen"],
+    "code": "abc112",
+    "stock": 30,
+    "status": true,
+    "category": "Categoria 2"
+  },
+  {
+    "id": 3,
+    "title": "Producto 3",
+    "description": "Tercer producto",
+    "price": 250,
+    "thumbnail": ["Sin imagen"],
+    "code": "abc113",
+    "stock": 50,
+    "status": false,
+    "category": "Categoria 1"
+  },
+  {
+    "id": 4,
+    "title": "Producto 4",
+    "description": "Cuarto producto",
+    "price": 85,
+    "thumbnail": ["Sin imagen"],
+    "code": "abc114",
+    "stock": 15,
+    "status": true,
+    "category": "Categoria 3"
+  },
+  {
+    "id": 5,
+    "title": "Producto 5",
+    "description": "Quinto producto",
+    "price": 425,
+    "thumbnail": ["Sin imagen"],
+    "code": "abc115",
+    "stock": 45,
+    "status": false,
+    "category": "Categoria 3"
+  },
+  {
+    "id": 6,
+    "title": "Producto 6",
+    "description": "Sexto producto",
+    "price": 300,
+    "thumbnail": ["Sin imagen"],
+    "code": "abc116",
+    "stock": 60,
+    "status": false,
+    "category": "Categoria 2"
+  },
+  {
+    "id": 7,
+    "title": "Producto 7",
+    "description": "Septimo producto",
+    "price": 275,
+    "thumbnail": ["Sin imagen"],
+    "code": "abc117",
+    "stock": 10,
+    "status": false,
+    "category": "Categoria 1"
+  },
+  {
+    "id": 8,
+    "title": "Producto 8",
+    "description": "Octavo producto",
+    "price": 175,
+    "thumbnail": ["Sin imagen"],
+    "code": "abc118",
+    "stock": 35,
+    "status": true,
+    "category": "Categoria 3"
+  },
+  {
+    "id": 9,
+    "title": "Producto 9",
+    "description": "Noveno producto",
+    "price": 580,
+    "thumbnail": ["Sin imagen"],
+    "code": "abc119",
+    "stock": 5,
+    "status": false,
+    "category": "Categoria 2"
+  },
+  {
+    "id": 10,
+    "title": "Producto 10",
+    "description": "Decimo producto",
+    "price": 430,
+    "thumbnail": ["Sin imagen"],
+    "code": "abc120",
+    "stock": 25,
+    "status": true,
+    "category": "Categoria 2"
+  }
+]
