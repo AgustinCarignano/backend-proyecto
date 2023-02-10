@@ -80,12 +80,12 @@
     "id": 8,
     "title": "Producto 8",
     "description": "Octavo producto",
-    "price": 175,
+    "price": 350,
     "thumbnail": ["Sin imagen"],
     "code": "abc118",
-    "stock": 35,
-    "status": true,
-    "category": "Categoria 3"
+    "stock": 20,
+    "status": false,
+    "category": "Categoria 1"
   },
   {
     "id": 9,

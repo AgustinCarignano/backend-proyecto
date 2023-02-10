@@ -1,13 +1,37 @@
 import fs from "fs";
+import { __dirname } from "../../utils.js";
+
+const path = `${__dirname}/files/productos.json`;
 
 export class ProductManager {
-  constructor(path) {
-    this.path = path;
+  async getProducts(limit) {
+    try {
+      if (fs.existsSync(path)) {
+        const productFile = await fs.promises.readFile(path, "utf-8");
+        const products = limit
+          ? JSON.parse(productFile).slice(0, parseInt(limit))
+          : JSON.parse(productFile);
+        return products; //retorna el array completo o solo una cantidad limitada por el parametro "limit"
+      } else {
+        return [];
+      }
+    } catch (error) {
+      return error;
+    }
+  }
+  async getProductById(pid) {
+    const products = await this.getProducts();
+    const searchedProduct = products.find(
+      (product) => product.id === parseInt(pid)
+    );
+    return searchedProduct
+      ? searchedProduct
+      : this.#generateError(
+          `Not found. No existe un producto con el id: ${pid}`
+        );
   }
   async addProduct(productObj) {
-    const products = await this.getProducts("all");
-    let statusForVerification; //como recibe un boolean que puede ser "false", utilizo esta variable para comprobar que el campo no este vacio.
-    if (productObj.status === false) statusForVerification = true;
+    const products = await this.getProducts();
     if (
       productObj.title &&
       productObj.description &&
@@ -15,7 +39,7 @@ export class ProductManager {
       productObj.thumbnail &&
       productObj.code &&
       productObj.stock &&
-      statusForVerification &&
+      typeof productObj.status === "boolean" &&
       productObj.category
     ) {
       const codeAlredyExist = products.some(
@@ -40,52 +64,29 @@ export class ProductManager {
       );
     }
   }
-  async getProducts(limit) {
-    try {
-      if (fs.existsSync(this.path)) {
-        const productFile = await fs.promises.readFile(this.path, "utf-8");
-        return limit === "all"
-          ? JSON.parse(productFile)
-          : JSON.parse(productFile).slice(0, parseInt(limit)); //retorna el array completo o solo una cantidad limitada por el parametro "limit"
-      } else {
-        return [];
-      }
-    } catch (error) {
-      return error;
-    }
-  }
-  async getProductById(id) {
-    const products = await this.getProducts("all");
-    const searchedProduct = products.find(
-      (product) => product.id === parseInt(id)
-    );
-    return searchedProduct
-      ? searchedProduct
-      : this.#generateError(
-          `Not found, No existe un producto con el id: ${id}`
-        );
-  }
-  async updateProduct(productId, newObject) {
+  async updateProduct(pid, newObject) {
     newObject.id && delete newObject.id; //con esta linea me aseguro de que no se modifique el id del objeto ya cargado en el array de productos
-    const products = await this.getProducts("all");
-    const productIndex = products.findIndex((prod) => prod.id === productId);
+    const products = await this.getProducts();
+    const productIndex = products.findIndex(
+      (prod) => prod.id === parseInt(pid)
+    );
     productIndex === -1 &&
-      this.#generateError(`No existe un producto con el id: ${productId}`);
+      this.#generateError(`No existe un producto con el id: ${pid}`);
     products[productIndex] = { ...products[productIndex], ...newObject }; //sobreescribe las propiedades que se reciban por paramtero
     await this.#writeFile(products);
     return products[productIndex];
   }
-  async deleteProduct(productId) {
-    const products = await this.getProducts("all");
-    let i = products.findIndex((producto) => producto.id === productId);
-    i === -1 &&
-      this.#generateError(`No existe un producto con el id: ${productId}`);
+  async deleteProduct(pid) {
+    const products = await this.getProducts();
+    let i = products.findIndex((producto) => producto.id === parseInt(pid));
+    i === -1 && this.#generateError(`No existe un producto con el id: ${pid}`);
     products.splice(i, 1);
     await this.#writeFile(products);
+    return parseInt(pid);
   }
   async #createId() {
     try {
-      const productFile = await this.getProducts("all");
+      const productFile = await this.getProducts();
       const id =
         productFile.length === 0
           ? 1
@@ -100,7 +101,7 @@ export class ProductManager {
   }
   async #writeFile(product) {
     try {
-      await fs.promises.writeFile(this.path, JSON.stringify(product));
+      await fs.promises.writeFile(path, JSON.stringify(product));
     } catch (error) {
       return error;
     }

@@ -1,17 +1,15 @@
 import { Router } from "express";
-import { ProductManager } from "../ProductManager.js";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+// import { ProductManager } from "../dao/fileManagers/ProductManager.js";
+import { ProductManager } from "../dao/mongoManagers/ProductManager.js";
 
 const router = Router();
-const productManager = new ProductManager(`${__dirname}../../productos.json`); //Ruta absoluta para el archivo del array de productos.
+const productManager = new ProductManager(); //Instancia de la clase para gestionar los productos
 
 //La ruta get acepta tambien el query param de "limit"
 router.get("/", async (req, res) => {
   const { limit } = req.query;
-  const products = await productManager.getProducts(limit || "all");
+  const products = await productManager.getProducts(limit);
   res.json({ status: "success", products });
 });
 
@@ -42,10 +40,7 @@ router.put("/:pid", async (req, res) => {
   try {
     const { pid } = req.params;
     const modifiedProduct = req.body;
-    const newProduct = await productManager.updateProduct(
-      parseInt(pid),
-      modifiedProduct
-    );
+    const newProduct = await productManager.updateProduct(pid, modifiedProduct);
     res.status(200).json({
       message: "Producto modificado con éxito",
       modifiedProduct: newProduct,
@@ -58,8 +53,8 @@ router.put("/:pid", async (req, res) => {
 router.delete("/:pid", async (req, res) => {
   try {
     const { pid } = req.params;
-    await productManager.deleteProduct(parseInt(pid));
-    res.json({ message: "producto eliminado con éxito" });
+    const id = await productManager.deleteProduct(pid);
+    res.json({ message: "producto eliminado con éxito", id });
   } catch (error) {
     res.status(404).json({ error: error.message });
   }
