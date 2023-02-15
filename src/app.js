@@ -5,7 +5,9 @@ import { __dirname } from "./utils.js";
 import "./dbConfig.js";
 import productsRouter from "./routes/products.router.js";
 import cartsRouter from "./routes/carts.router.js";
-import messagesRouter from "./routes/messages.router.js";
+import messagesRouter from "./routes/viewsRouter/messages.router.js";
+import productsViewRouter from "./routes/viewsRouter/products.router.js";
+import cartsViewRouter from "./routes/viewsRouter/carts.router.js";
 import { MessageManager } from "./dao/mongoManagers/MessageManager.js";
 
 const app = express();
@@ -24,6 +26,8 @@ app.set("view engine", "handlebars");
 app.use("/api/products/", productsRouter);
 app.use("/api/carts/", cartsRouter);
 app.use("/messages", messagesRouter);
+app.use("/carts", cartsViewRouter);
+app.use("/products", productsViewRouter);
 
 const httpServer = app.listen(PORT, () => {
   console.log(`Escuchando al puerto ${PORT}`);

@@ -11,7 +11,10 @@ export class CartManager {
   }
   async getCartById(cid) {
     try {
-      const cart = await cartsModel.findById(cid);
+      const cart = await cartsModel.findById(cid).populate({
+        path: "products",
+        populate: { path: "product", model: "Products" },
+      });
       return cart;
     } catch (error) {
       throw new Error(error.message);
@@ -20,21 +23,53 @@ export class CartManager {
   async addProductToCart(cid, pid) {
     try {
       const cart = await cartsModel.findById(cid);
-      const product = cart.products.find((item) => item.productId === pid);
+      const product = cart.products.find(
+        (item) => item.product.toString() === pid
+      );
       if (product) {
         product.quantity++;
       } else {
         cart.products.push({
-          productId: pid,
+          product: pid,
           quantity: 1,
         });
       }
-      const newCart = await cartsModel.findByIdAndUpdate(cid, cart, {
-        new: true,
-      });
-      return newCart;
+      cart.save();
+      return cart;
     } catch (error) {
       throw new Error(error.message);
     }
+  }
+  async updateCart(cid, newProducts) {
+    const cart = await cartsModel.findByIdAndUpdate(
+      cid,
+      { products: newProducts },
+      { new: true }
+    );
+    return cart;
+  }
+  async updateProductInCart(cid, pid, q) {
+    const cart = await cartsModel.findById(cid);
+    const product = cart.products.find(
+      (item) => item.product.toString() === pid
+    );
+    product.quantity = q;
+    cart.save();
+    return cart;
+  }
+  async deleteProductById(cid, pid) {
+    const cart = await cartsModel.findById(cid);
+    const productIndex = cart.products.findIndex(
+      (item) => item.product.toString() === pid
+    );
+    cart.products.splice(productIndex, 1);
+    cart.save();
+    return cart;
+  }
+  async deleteProducts(cid) {
+    const cart = await cartsModel.findById(cid);
+    cart.products.splice(0, cart.products.length);
+    cart.save();
+    return cart;
   }
 }

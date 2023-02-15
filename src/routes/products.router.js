@@ -8,9 +8,46 @@ const productManager = new ProductManager(); //Instancia de la clase para gestio
 
 //La ruta get acepta tambien el query param de "limit"
 router.get("/", async (req, res) => {
-  const { limit } = req.query;
-  const products = await productManager.getProducts(limit);
-  res.json({ status: "success", products });
+  const { limit = 10, page = 1, sort, query } = req.query;
+
+  try {
+    const products = await productManager.getProducts({
+      limit,
+      page,
+      sort,
+      query,
+    });
+
+    let prevUrl = null;
+    let nextUrl = null;
+    if (products.hasPrevPage) {
+      const i = req.originalUrl.indexOf("page=");
+      prevUrl = `${req.originalUrl.substring(0, i)}page=${
+        products.prevPage
+      }${req.originalUrl.substring(i + 6, req.originalUrl.length)}`;
+    }
+    if (products.hasNextPage) {
+      const i = req.originalUrl.indexOf("page=");
+      nextUrl = `${req.originalUrl.substring(0, i)}page=${
+        products.nextPage
+      }${req.originalUrl.substring(i + 6, req.originalUrl.length)}`;
+    }
+
+    res.json({
+      status: "success",
+      payload: products.docs,
+      totalPages: products.totalPages,
+      prevPage: products.prevPage,
+      nextPage: products.nextPage,
+      page: products.page,
+      hasPrevPage: products.hasPrevPage,
+      hasNextPage: products.hasNextPage,
+      prevLink: prevUrl,
+      nextLink: nextUrl,
+    });
+  } catch (error) {
+    res.status(404).json({ status: "error", error: error.message });
+  }
 });
 
 router.get("/:pid", async (req, res) => {
