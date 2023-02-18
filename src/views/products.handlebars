@@ -1,7 +1,24 @@
-<div>
-  {{#each payload}}
-    <h2>{{title}}</h2>
-  {{/each}}
+{{!-- <link rel="stylesheet" href="/newStyle.css" /> --}}
+<div class="productContainer">
+  <h1>Productos</h1>
+  <div class="cardContainer">
+    {{#each payload}}
+      <div class="card">
+        <h4>{{title}}</h4>
+        <p>${{price}}</p>
+        <a class="links" href="/products/{{id}}">Detalle</a>
+      </div>
+    {{/each}}
+  </div>
+  <div class="paginate">
+  {{#if hasPrevPage}}
+    <a href={{prevLink}}><< Anterior</a>
+  {{/if}}
+  {{#if hasNextPage}}
+    <a href={{nextLink}}>Siguiente >></a>
+  {{/if}}
+  </div>
+  <div>
+    <a href="/carts/63ee08dedfd48a7e16da594d">Ver Carrito</a>
+  </div>
 </div>
-
-{{!-- <p>{{payload}}</p> --}}

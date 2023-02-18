@@ -4,6 +4,8 @@ import { ProductManager } from "../../dao/mongoManagers/ProductManager.js";
 const router = Router();
 const productManager = new ProductManager();
 
+//Solo dos rutas para obtener la lista completa de productos, con el mismo formado definido en la api, y los datos de un solo productos.
+//Se renderizan vistas distintas en cada caso
 router.get("/", async (req, res) => {
   const { limit = 10, page = 1, sort, query } = req.query;
 
@@ -18,19 +20,26 @@ router.get("/", async (req, res) => {
   let nextUrl = null;
   if (products.hasPrevPage) {
     const i = req.originalUrl.indexOf("page=");
-    prevUrl = `${req.originalUrl.substring(0, i)}page=${
-      products.prevPage
-    }${req.originalUrl.substring(i + 6, req.originalUrl.length)}`;
+    if (i === -1) {
+      prevUrl = `${req.originalUrl}?page=${products.prevPage}`;
+    } else {
+      prevUrl = `${req.originalUrl.substring(0, i)}page=${
+        products.prevPage
+      }${req.originalUrl.substring(i + 6, req.originalUrl.length)}`;
+    }
   }
   if (products.hasNextPage) {
     const i = req.originalUrl.indexOf("page=");
-    nextUrl = `${req.originalUrl.substring(0, i)}page=${
-      products.nextPage
-    }${req.originalUrl.substring(i + 6, req.originalUrl.length)}`;
+    if (i === -1) {
+      nextUrl = `${req.originalUrl}?page=${products.nextPage}`;
+    } else {
+      nextUrl = `${req.originalUrl.substring(0, i)}page=${
+        products.nextPage
+      }${req.originalUrl.substring(i + 6, req.originalUrl.length)}`;
+    }
   }
-  const payload = products.docs;
-  res.render("products", { payload });
-  /* res.render("products", {
+
+  res.render("products", {
     status: "success",
     payload: products.docs,
     totalPages: products.totalPages,
@@ -41,7 +50,13 @@ router.get("/", async (req, res) => {
     hasNextPage: products.hasNextPage,
     prevLink: prevUrl,
     nextLink: nextUrl,
-  }); */
+  });
+});
+
+router.get("/:pid", async (req, res) => {
+  const { pid } = req.params;
+  const product = await productManager.getProductById(pid);
+  res.render("product", { product });
 });
 
 export default router;

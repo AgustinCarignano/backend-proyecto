@@ -10,6 +10,9 @@ import productsViewRouter from "./routes/viewsRouter/products.router.js";
 import cartsViewRouter from "./routes/viewsRouter/carts.router.js";
 import { MessageManager } from "./dao/mongoManagers/MessageManager.js";
 
+import Handlebars from "handlebars";
+import { allowInsecurePrototypeAccess } from "@handlebars/allow-prototype-access";
+
 const app = express();
 const PORT = 8080;
 
@@ -18,7 +21,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(`${__dirname}/public`));
 
 //handlebars
-app.engine("handlebars", handlebars.engine());
+// app.engine("handlebars", handlebars.engine());
+//Modificacion del motor para que me permita generar las vistas.
+app.engine(
+  "handlebars",
+  handlebars.engine({
+    defaulyLayout: "main",
+    handlebars: allowInsecurePrototypeAccess(Handlebars),
+  })
+);
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "handlebars");
 
@@ -57,7 +68,7 @@ socketServer.on("connection", async (socket) => {
     socketServer.emit("chat", newMessages);
   });
 
-  socket.on("clean", async (obj) => {
+  socket.on("clean", async () => {
     const newMessages = await messageManager.cleanHisotry();
     socketServer.emit("chat", newMessages);
   });

@@ -60,5 +60,5 @@ form.onsubmit = (e) => {
 };
 
 cleanButton.onclick = () => {
-  socket.emit("clean", { message: "Borra historial" });
+  socket.emit("clean", { message: "Borrar historial" });
 };

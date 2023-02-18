@@ -1,1 +1,18 @@
-<h1>Holaaaaa</h1>
+{{! <link rel="stylesheet" href="/newStyle.css" /> }}
+<div class="cartContainer">
+  <h1>Carrito</h1>
+  <h3>Identificador</h3>
+  <p>{{cart.id}}</p>
+  <h3>Productos</h3>
+  <div class="grid">
+    <h4>Nombre</h4>
+    <h4>Cantidad</h4>
+    <h4>Precio</h4>
+    {{#each cart.products}}
+      <p>{{product.title}}</p>
+      <p>{{quantity}}</p>
+      <p>{{product.price}}</p>
+    {{/each}}
+  </div>
+  <a class="links" href="/products">Página principal</a>
+</div>

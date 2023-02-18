@@ -22,6 +22,7 @@ async function productExists(req, res, next) {
 }
 
 //Rutas
+//La ruta crea un carrito con un array vacio de productos
 router.post("/", async (req, res) => {
   try {
     const newCart = await cartManager.createCart();
@@ -33,6 +34,7 @@ router.post("/", async (req, res) => {
   }
 });
 
+//Permite obtener todos los productos que se encuentran en el carrito indicado, mostrando la informacion completa
 router.get("/:cid", async (req, res) => {
   try {
     const { cid } = req.params;
@@ -47,19 +49,17 @@ router.get("/:cid", async (req, res) => {
 });
 
 //Aqui implemento el middleware que, de existir el producto, permite continuar. De lo contario devuelve un objeto de error.
-router.post(
-  "/:cid/product/:pid",
-  /* productExists, */ async (req, res) => {
-    try {
-      const { cid, pid } = req.params;
-      const cart = await cartManager.addProductToCart(cid, pid);
-      res.status(200).json({ message: "Producto agregado con éxito", cart });
-    } catch (error) {
-      res.status(404).json({ error: error.message });
-    }
+router.post("/:cid/product/:pid", productExists, async (req, res) => {
+  try {
+    const { cid, pid } = req.params;
+    const cart = await cartManager.addProductToCart(cid, pid);
+    res.status(200).json({ message: "Producto agregado con éxito", cart });
+  } catch (error) {
+    res.status(404).json({ error: error.message });
   }
-);
+});
 
+//Ruta que permite modificar el array completo de productos del carrito, recibiendo por body un nuevo array con id y cantidad
 router.put("/:cid", async (req, res) => {
   const { cid } = req.params;
   const products = req.body;
@@ -70,6 +70,7 @@ router.put("/:cid", async (req, res) => {
   });
 });
 
+//La ruta permite actualizar la cantidad del producto referenciado, recibiendo este valor por body
 router.put("/:cid/products/:pid", async (req, res) => {
   const { cid, pid } = req.params;
   const quantity = req.body.quantity;
@@ -80,6 +81,7 @@ router.put("/:cid/products/:pid", async (req, res) => {
   });
 });
 
+//La ruta permite eliminar un producto del arreglo productos en el carrito que se referencia
 router.delete("/:cid/products/:pid", async (req, res) => {
   const { cid, pid } = req.params;
   const cart = await cartManager.deleteProductById(cid, pid);
@@ -89,6 +91,7 @@ router.delete("/:cid/products/:pid", async (req, res) => {
   });
 });
 
+//La ruta permite eliminar todos los productos de un carrito. No elimina el carrito de la base de datos.
 router.delete("/:cid", async (req, res) => {
   const { cid } = req.params;
   const cart = await cartManager.deleteProducts(cid);
