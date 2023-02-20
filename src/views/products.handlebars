@@ -1,5 +1,6 @@
 {{!-- <link rel="stylesheet" href="/newStyle.css" /> --}}
 <div class="productContainer">
+  {{#if render}}
   <h1>Productos</h1>
   <div class="cardContainer">
     {{#each payload}}
@@ -18,6 +19,12 @@
     <a href={{nextLink}}>Siguiente >></a>
   {{/if}}
   </div>
+  {{else}}
+  <h2>Error 404: El recurso al que intenta acceder no existe</h2>
+  <div class="linkError">
+    <a href="/products">Home</a>
+  </div>
+  {{/if}}
   <div>
     <a href="/carts/63ee08dedfd48a7e16da594d">Ver Carrito</a>
   </div>

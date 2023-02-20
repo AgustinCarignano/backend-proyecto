@@ -1,16 +1,23 @@
 {{! <link rel="stylesheet" href="/newStyle.css" /> }}
 <div class="detailContainer">
-  <h1>{{product.title}}</h1>
-  <h4>Description</h4>
-  <p>{{product.description}}</p>
-  <h4>Category</h4>
-  <p>{{product.category}}</p>
-  <h4>Price</h4>
-  <p>${{product.price}}</p>
-  <div id="linkToCart">
-    <a href="/products">Página principal</a>
-    <button id="addToCart" name={{product.id}}>Add to cart</button>
-  </div>
+  {{#if render}}
+    <h1>{{product.title}}</h1>
+    <h4>Description</h4>
+    <p>{{product.description}}</p>
+    <h4>Category</h4>
+    <p>{{product.category}}</p>
+    <h4>Price</h4>
+    <p>${{product.price}}</p>
+    <div id="linkToCart">
+      <a href="/products">Página principal</a>
+      <button id="addToCart" name={{product.id}}>Add to cart</button>
+    </div>
+  {{else}}
+    <h2>Error 404: El recurso al que intenta acceder no existe</h2>
+    <div class="linkError">
+      <a href="/products">Home</a>
+    </div>
+  {{/if}}
 </div>
 
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>

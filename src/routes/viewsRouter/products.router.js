@@ -39,8 +39,11 @@ router.get("/", async (req, res) => {
     }
   }
 
+  const render = products.docs.length === 0 ? false : true;
+
   res.render("products", {
     status: "success",
+    render: render,
     payload: products.docs,
     totalPages: products.totalPages,
     prevPage: products.prevPage,
@@ -54,9 +57,15 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:pid", async (req, res) => {
-  const { pid } = req.params;
-  const product = await productManager.getProductById(pid);
-  res.render("product", { product });
+  try {
+    const { pid } = req.params;
+    const product = await productManager.getProductById(pid);
+    const render = true;
+    res.render("product", { render, product });
+  } catch (error) {
+    const render = false;
+    res.render("product", { render });
+  }
 });
 
 export default router;
