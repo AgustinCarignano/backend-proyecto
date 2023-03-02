@@ -1,13 +1,16 @@
 import express from "express";
 import handlebars from "express-handlebars";
+import session from "express-session";
+import mongoStore from "connect-mongo";
+import cookieParser from "cookie-parser";
 import { Server } from "socket.io";
 import { __dirname } from "./utils.js";
 import "./dbConfig.js";
 import productsRouter from "./routes/products.router.js";
 import cartsRouter from "./routes/carts.router.js";
-import messagesRouter from "./routes/viewsRouter/messages.router.js";
-import productsViewRouter from "./routes/viewsRouter/products.router.js";
-import cartsViewRouter from "./routes/viewsRouter/carts.router.js";
+import messagesRouter from "./routes/messages.router.js";
+import usersRouter from "./routes/users.router.js";
+import viewsRouter from "./routes/views.router.js";
 import { MessageManager } from "./dao/mongoManagers/MessageManager.js";
 
 import Handlebars from "handlebars";
@@ -19,6 +22,23 @@ const PORT = 8080;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(`${__dirname}/public`));
+
+//cookies
+app.use(cookieParser("cookieKey"));
+
+//session Mongo
+app.use(
+  session({
+    store: new mongoStore({
+      mongoUrl:
+        "mongodb+srv://agustinCarignano:agustinCarignanoCluster@ac-cluster.spgonex.mongodb.net/ecommerce?retryWrites=true&w=majority",
+    }),
+    resave: false,
+    saveUninitialized: false,
+    secret: "sessionKey",
+    cookie: { maxAge: 60000 },
+  })
+);
 
 //handlebars
 // app.engine("handlebars", handlebars.engine());
@@ -37,8 +57,15 @@ app.set("view engine", "handlebars");
 app.use("/api/products/", productsRouter);
 app.use("/api/carts/", cartsRouter);
 app.use("/messages", messagesRouter);
-app.use("/carts", cartsViewRouter);
-app.use("/products", productsViewRouter);
+app.use("/users", usersRouter);
+app.use("/views", viewsRouter);
+
+app.get("/", (req, res) => {
+  res.redirect("/views/login");
+});
+app.get("/*", (req, res) => {
+  res.render("errorUrl");
+});
 
 const httpServer = app.listen(PORT, () => {
   console.log(`Escuchando al puerto ${PORT}`);

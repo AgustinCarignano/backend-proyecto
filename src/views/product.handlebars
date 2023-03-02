@@ -9,13 +9,13 @@
     <h4>Price</h4>
     <p>${{product.price}}</p>
     <div id="linkToCart">
-      <a href="/products">Página principal</a>
+      <a href="/views/products">Página principal</a>
       <button id="addToCart" name={{product.id}}>Add to cart</button>
     </div>
   {{else}}
     <h2>Error 404: El recurso al que intenta acceder no existe</h2>
     <div class="linkError">
-      <a href="/products">Home</a>
+      <a href="/views/products">Home</a>
     </div>
   {{/if}}
 </div>

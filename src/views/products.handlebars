@@ -1,31 +1,34 @@
-{{!-- <link rel="stylesheet" href="/newStyle.css" /> --}}
+{{! <link rel="stylesheet" href="/newStyle.css" /> }}
 <div class="productContainer">
+  <p>Hola <strong>{{user.name}}</strong> <small>(rol: {{user.rol}})</small></p>
+  <br />
+  <a href="/users/logout">Logout</a>
   {{#if render}}
-  <h1>Productos</h1>
-  <div class="cardContainer">
-    {{#each payload}}
-      <div class="card">
-        <h4>{{title}}</h4>
-        <p>${{price}}</p>
-        <a class="links" href="/products/{{id}}">Detalle</a>
-      </div>
-    {{/each}}
-  </div>
-  <div class="paginate">
-  {{#if hasPrevPage}}
-    <a href={{prevLink}}><< Anterior</a>
-  {{/if}}
-  {{#if hasNextPage}}
-    <a href={{nextLink}}>Siguiente >></a>
-  {{/if}}
-  </div>
+    <h1>Productos</h1>
+    <div class="cardContainer">
+      {{#each payload}}
+        <div class="card">
+          <h4>{{title}}</h4>
+          <p>${{price}}</p>
+          <a class="links" href="/views/products/{{id}}">Detalle</a>
+        </div>
+      {{/each}}
+    </div>
+    <div class="paginate">
+      {{#if hasPrevPage}}
+        <a href={{prevLink}}>&lt&lt Anterior</a>
+      {{/if}}
+      {{#if hasNextPage}}
+        <a href={{nextLink}}>Siguiente >></a>
+      {{/if}}
+    </div>
   {{else}}
-  <h2>Error 404: El recurso al que intenta acceder no existe</h2>
-  <div class="linkError">
-    <a href="/products">Home</a>
-  </div>
+    <h2>Error 404: El recurso al que intenta acceder no existe</h2>
+    <div class="linkError">
+      <a href="/views/products">Home</a>
+    </div>
   {{/if}}
   <div>
-    <a href="/carts/63ee08dedfd48a7e16da594d">Ver Carrito</a>
+    <a href="/views/carts/63ee08dedfd48a7e16da594d">Ver Carrito</a>
   </div>
 </div>

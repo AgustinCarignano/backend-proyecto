@@ -11,7 +11,7 @@ btn.onclick = async () => {
     },
   });
   const anchor = document.createElement("a");
-  anchor.innerHTML = `<a href="/carts/63ee08dedfd48a7e16da594d">Ver Carrito<a>`;
+  anchor.innerHTML = `<a href="/views/carts/63ee08dedfd48a7e16da594d">Ver Carrito<a>`;
   div.appendChild(anchor);
 };
 /* btn.onclick = async () => {

@@ -1,13 +1,56 @@
 import { Router } from "express";
-import { ProductManager } from "../../dao/mongoManagers/ProductManager.js";
+import { CartManager } from "../dao/mongoManagers/CartManager.js";
+import { ProductManager } from "../dao/mongoManagers/ProductManager.js";
+import { isNotLogged, isLogged } from "../middlewares/auth.middleware.js";
 
 const router = Router();
+
+const cartManager = new CartManager();
 const productManager = new ProductManager();
 
+//ruta raiz redirige a la vista de login
+router.get("/", (req, res) => {
+  res.redirect("/views/login");
+});
+
+//Ruta para Login
+router.get("/login", isLogged, (req, res) => {
+  res.render("login");
+});
+
+router.get("/login/errorLogin", (req, res) => {
+  res.render("errorLogin");
+});
+
+//Ruta para registro
+router.get("/register", isLogged, (req, res) => {
+  res.render("register");
+});
+
+router.get("/register/errorRegister", isLogged, (req, res) => {
+  res.render("errorRegister");
+});
+
+//Ruta para carrito
+//Se obtinen los datos de los productos de un determinado carrito y se genera una vista
+router.get("/carts/:cid", isNotLogged, async (req, res) => {
+  try {
+    const { cid } = req.params;
+    const cart = await cartManager.getCartById(cid);
+    const render = true;
+    res.render("cart", { render, cart });
+  } catch (error) {
+    const render = false;
+    res.render("cart", { render });
+  }
+});
+
+//Ruta de productos
 //Solo dos rutas para obtener la lista completa de productos, con el mismo formado definido en la api, y los datos de un solo productos.
 //Se renderizan vistas distintas en cada caso
-router.get("/", async (req, res) => {
+router.get("/products", isNotLogged, async (req, res) => {
   const { limit = 10, page = 1, sort, query } = req.query;
+  const { userSession } = req.signedCookies;
 
   const products = await productManager.getProducts({
     limit,
@@ -42,6 +85,7 @@ router.get("/", async (req, res) => {
   const render = products.docs.length === 0 ? false : true;
 
   res.render("products", {
+    user: userSession,
     status: "success",
     render: render,
     payload: products.docs,
@@ -56,7 +100,7 @@ router.get("/", async (req, res) => {
   });
 });
 
-router.get("/:pid", async (req, res) => {
+router.get("/products/:pid", isNotLogged, async (req, res) => {
   try {
     const { pid } = req.params;
     const product = await productManager.getProductById(pid);
