@@ -8,10 +8,10 @@ const usersSchema = new mongoose.Schema({
   last_name: {
     type: String,
     required: true,
+    default: "",
   },
   age: {
     type: Number,
-    required: true,
   },
   email: {
     type: String,

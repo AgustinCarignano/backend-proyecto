@@ -16,4 +16,13 @@ export class UserManager {
     }
     return user;
   }
+  async getUserById(uid) {
+    try {
+      const user = await userModel.findById(uid);
+      if (!user) throw new Error("user does not exist");
+      return user;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
 }

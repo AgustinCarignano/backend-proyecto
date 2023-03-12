@@ -13,6 +13,11 @@ import usersRouter from "./routes/users.router.js";
 import viewsRouter from "./routes/views.router.js";
 import { MessageManager } from "./dao/mongoManagers/MessageManager.js";
 
+//passport
+import passport from "passport";
+import "./passport/passport.auth.js";
+
+//Handlebars
 import Handlebars from "handlebars";
 import { allowInsecurePrototypeAccess } from "@handlebars/allow-prototype-access";
 
@@ -52,6 +57,10 @@ app.engine(
 );
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "handlebars");
+
+//passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 //routes
 app.use("/api/products/", productsRouter);
