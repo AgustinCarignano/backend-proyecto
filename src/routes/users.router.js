@@ -12,7 +12,6 @@ router.post(
     passReqToCallback: true,
   }),
   (req, res) => {
-    //console.log(req);
     res.cookie(
       "userSession",
       { name: req.user.first_name, rol: "user" },
@@ -90,6 +89,7 @@ router.get("/logout", (req, res) => {
       console.log(error);
     } else {
       res.clearCookie("userSession");
+      res.clearCookie("client_token");
       res.redirect("/");
     }
   });

@@ -2,6 +2,7 @@ import passport from "passport";
 import { Strategy as LocalStartegy } from "passport-local";
 import { Strategy as GithubStrategy } from "passport-github2";
 import { Strategy as FacebookStrategy } from "passport-facebook";
+import { ExtractJwt, Strategy as JwtStrategy } from "passport-jwt";
 import { UserManager } from "../dao/mongoManagers/UserManager.js";
 import { hashPassword, comparePasswords } from "../utils.js";
 
@@ -106,8 +107,42 @@ passport.use(
   )
 );
 
+//Extractor del token desde las cookies
+const cookieExtractor = (req) => {
+  const token = req?.signedCookies?.client_token;
+  return token;
+};
+
+//Estrategia utilizada en la ruta jwt/login. Extrae Token de cookies
+passport.use(
+  "jwtLogin",
+  new JwtStrategy(
+    {
+      secretOrKey: "mySecretKey",
+      jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
+    },
+    async (jwtPayload, done) => {
+      done(null, jwtPayload.data);
+    }
+  )
+);
+
+//Estretegia utilizada en el llamado a la ruta api/sessions. Extrae Token del Header
+passport.use(
+  "current",
+  new JwtStrategy(
+    {
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: "mySecretKey",
+    },
+    async (jwtPayload, done) => {
+      done(null, jwtPayload.data);
+    }
+  )
+);
+
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  done(null, user._id);
 });
 passport.deserializeUser(async (id, done) => {
   const user = await userManager.getUserById(id);

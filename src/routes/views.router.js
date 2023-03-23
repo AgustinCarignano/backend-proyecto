@@ -51,6 +51,7 @@ router.get("/carts/:cid", isNotLogged, async (req, res) => {
 router.get("/products", isNotLogged, async (req, res) => {
   const { limit = 10, page = 1, sort, query } = req.query;
   const { userSession } = req.signedCookies;
+  const { cart } = req.user;
 
   const products = await productManager.getProducts({
     limit,
@@ -86,6 +87,7 @@ router.get("/products", isNotLogged, async (req, res) => {
 
   res.render("products", {
     user: userSession,
+    cartId: cart.toString(),
     status: "success",
     render: render,
     payload: products.docs,
@@ -103,9 +105,10 @@ router.get("/products", isNotLogged, async (req, res) => {
 router.get("/products/:pid", isNotLogged, async (req, res) => {
   try {
     const { pid } = req.params;
+    const { cart } = req.user;
     const product = await productManager.getProductById(pid);
     const render = true;
-    res.render("product", { render, product });
+    res.render("product", { render, product, cartId: cart.toString() });
   } catch (error) {
     const render = false;
     res.render("product", { render });

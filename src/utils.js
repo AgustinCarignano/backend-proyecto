@@ -1,6 +1,7 @@
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -14,3 +15,8 @@ export const hashPassword = (password) =>
 
 export const comparePasswords = (password, hashPassword) =>
   bcrypt.compare(password, hashPassword);
+
+export const generateToken = (data) => {
+  const token = jwt.sign({ data }, "mySecretKey", { expiresIn: "1d" });
+  return token;
+};

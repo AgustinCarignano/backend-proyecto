@@ -1,9 +1,13 @@
 import { userModel } from "../models/users.model.js";
+import { CartManager } from "./CartManager.js";
+
+const cartManager = new CartManager();
 
 export class UserManager {
   async addUser(userObj) {
     try {
-      const user = await userModel.create(userObj);
+      const { id } = await cartManager.createCart();
+      const user = await userModel.create({ ...userObj, cart: id });
       return user;
     } catch (error) {
       console.log(error);

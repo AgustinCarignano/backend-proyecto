@@ -10,7 +10,11 @@
     <p>${{product.price}}</p>
     <div id="linkToCart">
       <a href="/views/products">Página principal</a>
-      <button id="addToCart" name={{product.id}}>Add to cart</button>
+      <button
+        id="addToCart"
+        data-product_id={{product.id}}
+        data-cart_id={{cartId}}
+      >Add to cart</button>
     </div>
   {{else}}
     <h2>Error 404: El recurso al que intenta acceder no existe</h2>

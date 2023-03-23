@@ -11,6 +11,8 @@ import cartsRouter from "./routes/carts.router.js";
 import messagesRouter from "./routes/messages.router.js";
 import usersRouter from "./routes/users.router.js";
 import viewsRouter from "./routes/views.router.js";
+import jwtRouter from "./routes/jwt.router.js";
+import sessionsRouter from "./routes/sessions.router.js";
 import { MessageManager } from "./dao/mongoManagers/MessageManager.js";
 
 //passport
@@ -65,9 +67,11 @@ app.use(passport.session());
 //routes
 app.use("/api/products/", productsRouter);
 app.use("/api/carts/", cartsRouter);
+app.use("/api/sessions/", sessionsRouter);
 app.use("/messages", messagesRouter);
 app.use("/users", usersRouter);
 app.use("/views", viewsRouter);
+app.use("/jwt", jwtRouter);
 
 app.get("/", (req, res) => {
   res.redirect("/views/login");
