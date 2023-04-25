@@ -1,8 +1,9 @@
-{{! <link rel="stylesheet" href="/newStyle.css" /> }}
 <div class="productContainer">
-  <p>Hola <strong>{{user.name}}</strong> <small>(rol: {{user.rol}})</small></p>
+  <p>Hola
+    <strong>{{user.name}}</strong>
+    <small>(rol: {{user.rol}})</small></p>
   <br />
-  <a href="/users/logout">Logout</a>
+  <a href="/api/sessions/logout">Logout</a>
   {{#if render}}
     <h1>Productos</h1>
     <div class="cardContainer">
@@ -28,7 +29,10 @@
       <a href="/views/products">Home</a>
     </div>
   {{/if}}
-  <div>
-    <a href="/views/carts/{{cartId}}">Ver Carrito</a>
-  </div>
+  {{#if cartId}}
+    <div class="flexContainer">
+      <a href="/views/carts/{{cartId}}">Ver Carrito</a>
+      <a href="/views/messages">Ir al chat</a>
+    </div>
+  {{/if}}
 </div>

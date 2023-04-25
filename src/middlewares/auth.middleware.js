@@ -1,8 +1,10 @@
-export function isNotLogged(req, res, next) {
+/* export function isNotLogged(req, res, next) {
   if (req.session.logged) {
     next();
   } else {
-    res.redirect("/views/login");
+    const token = req?.cookies?.client_token;
+    if (!token) return res.redirect("/views/login");
+    res.redirect("/api/users/verifyToken");
   }
 }
 
@@ -12,7 +14,7 @@ export function isLogged(req, res, next) {
   } else {
     next();
   }
-}
+} */
 
 export function isAdmin(req, res, next) {
   const { email, password } = req.body;
@@ -32,4 +34,20 @@ export function isAdmin(req, res, next) {
     req.session.isAdmin = false;
     next();
   }
+}
+
+export function isAdminAuth(req, res, next) {
+  if (req.session.isAdmin) next();
+  else
+    res
+      .status(403)
+      .json({ message: "Unauthorized to get access to this endpoint" });
+}
+
+export function isUserAuth(req, res, next) {
+  if (!req.session.isAdmin) next();
+  else
+    res
+      .status(403)
+      .json({ message: "Unauthorized to get access to this endpoint" });
 }

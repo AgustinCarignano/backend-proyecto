@@ -1,4 +1,3 @@
-{{! <link rel="stylesheet" href="/newStyle.css" /> }}
 <div class="detailContainer">
   {{#if render}}
     <h1>{{product.title}}</h1>
@@ -10,11 +9,13 @@
     <p>${{product.price}}</p>
     <div id="linkToCart">
       <a href="/views/products">Página principal</a>
-      <button
-        id="addToCart"
-        data-product_id={{product.id}}
-        data-cart_id={{cartId}}
-      >Add to cart</button>
+      {{#if cartId}}
+        <button
+          id="addToCart"
+          data-product_id={{product._id}}
+          data-cart_id={{cartId}}
+        >Add to cart</button>
+      {{/if}}
     </div>
   {{else}}
     <h2>Error 404: El recurso al que intenta acceder no existe</h2>

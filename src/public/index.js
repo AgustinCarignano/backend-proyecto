@@ -11,7 +11,11 @@ btn.onclick = async () => {
       "content-Type": "application/json",
     },
   });
-  const anchor = document.createElement("a");
-  anchor.innerHTML = `<a href="/views/carts/${cart_id}">Ver Carrito<a>`;
-  div.appendChild(anchor);
+
+  if (!existLink) {
+    const anchor = document.createElement("a");
+    anchor.innerHTML = `<a href="/views/carts/${cart_id}">Ver Carrito<a>`;
+    div.appendChild(anchor);
+    existLink = true;
+  }
 };

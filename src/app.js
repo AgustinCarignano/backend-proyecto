@@ -1,115 +1,77 @@
 import express from "express";
 import handlebars from "express-handlebars";
 import session from "express-session";
-import mongoStore from "connect-mongo";
+import MongoStore from "connect-mongo";
 import cookieParser from "cookie-parser";
-import { Server } from "socket.io";
-import { __dirname } from "./utils.js";
-import "./dbConfig.js";
-import productsRouter from "./routes/products.router.js";
-import cartsRouter from "./routes/carts.router.js";
-import messagesRouter from "./routes/messages.router.js";
-import usersRouter from "./routes/users.router.js";
-import viewsRouter from "./routes/views.router.js";
-import jwtRouter from "./routes/jwt.router.js";
-import sessionsRouter from "./routes/sessions.router.js";
-import { MessageManager } from "./dao/mongoManagers/MessageManager.js";
-
-//passport
 import passport from "passport";
-import "./passport/passport.auth.js";
-
-//Handlebars
-import Handlebars from "handlebars";
-import { allowInsecurePrototypeAccess } from "@handlebars/allow-prototype-access";
+import cors from "cors";
+import "./middlewares/passport.middleware.js";
+import "./persistence/MongoDB/configMongo.js";
+import config from "./config.js";
+import { __dirname } from "./utils/path.utils.js";
+//Routes imports -------------------------------------------
+import cartsRouter from "./routes/carts.router.js";
+import productsRouter from "./routes/products.router.js";
+//import usersRouter from "./routes/users.router.js";
+import authRouter from "./routes/auth.router.js";
+import sessionsRouter from "./routes/sessions.router.js";
+import viewsRouter from "./routes/views.router.js";
 
 const app = express();
-const PORT = 8080;
+const PORT = config.port;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(`${__dirname}/public`));
 
-//cookies
-app.use(cookieParser("cookieKey"));
-
-//session Mongo
-app.use(
-  session({
-    store: new mongoStore({
-      mongoUrl:
-        "mongodb+srv://agustinCarignano:agustinCarignanoCluster@ac-cluster.spgonex.mongodb.net/ecommerce?retryWrites=true&w=majority",
-    }),
-    resave: false,
-    saveUninitialized: false,
-    secret: "sessionKey",
-    cookie: { maxAge: 60000 },
-  })
-);
-
-//handlebars
-// app.engine("handlebars", handlebars.engine());
-//Modificacion del motor para que me permita generar las vistas.
-app.engine(
-  "handlebars",
-  handlebars.engine({
-    defaulyLayout: "main",
-    handlebars: allowInsecurePrototypeAccess(Handlebars),
-  })
-);
+//Views --------------------------------------------------
+app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "handlebars");
 
-//passport
+//Cookies ------------------------------------------------
+const COOKIE_KEY = config.cookieKey;
+app.use(cookieParser(COOKIE_KEY));
+
+//Session ------------------------------------------------
+const URI = config.uri;
+const SESSION_KEY = config.sessionKey;
+app.use(
+  session({
+    store: new MongoStore({
+      mongoUrl: URI,
+    }),
+    resave: false,
+    saveUninitialized: false,
+    secret: SESSION_KEY,
+    cookie: { maxAge: 86400000 },
+  })
+);
+
+//Passport ------------------------------------------------
 app.use(passport.initialize());
 app.use(passport.session());
 
-//routes
-app.use("/api/products/", productsRouter);
-app.use("/api/carts/", cartsRouter);
-app.use("/api/sessions/", sessionsRouter);
-app.use("/messages", messagesRouter);
-app.use("/users", usersRouter);
-app.use("/views", viewsRouter);
-app.use("/jwt", jwtRouter);
+//Cors ----------------------------------------------------
+app.use(cors());
 
-app.get("/", (req, res) => {
+//Routes --------------------------------------------------
+app.use("/api/carts/", cartsRouter);
+app.use("/api/products/", productsRouter);
+//app.use("/api/users/", usersRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/sessions", sessionsRouter);
+app.use("/views", viewsRouter);
+
+app.get("/", (_req, res) => {
   res.redirect("/views/login");
 });
-app.get("/*", (req, res) => {
-  res.render("errorUrl");
+app.get("/*", (_req, res) => {
+  res.render("errorUrl", { errorCode: "404", errorMessage: "Invalid URL" });
 });
 
-const httpServer = app.listen(PORT, () => {
+export const httpServer = app.listen(PORT, () => {
   console.log(`Escuchando al puerto ${PORT}`);
 });
 
-//socket server
-const socketServer = new Server(httpServer);
-const messageManager = new MessageManager();
-
-socketServer.on("connection", async (socket) => {
-  console.log(`Cliente conectado. ID: ${socket.id}`);
-  socket.emit("bienvenida", {
-    message: "Conectado al servidor",
-  });
-
-  socket.on("disconnect", () => {
-    console.log(`Cliente desconectado. ID: ${socket.id}`);
-  });
-
-  socket.on("nuevoIngreso", async (user) => {
-    socket.broadcast.emit("nuevoIngreso", user);
-    socket.emit("chat", await messageManager.getMessages());
-  });
-
-  socket.on("chat", async (msjObj) => {
-    const newMessages = await messageManager.savedMessages(msjObj);
-    socketServer.emit("chat", newMessages);
-  });
-
-  socket.on("clean", async () => {
-    const newMessages = await messageManager.cleanHisotry();
-    socketServer.emit("chat", newMessages);
-  });
-});
+import("./controllers/messages.controller.js");

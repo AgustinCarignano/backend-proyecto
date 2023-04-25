@@ -1,10 +1,10 @@
 <h3>Complete el siguiente formulario para registrarse</h3>
-{{! <form action="/users/register" method="post"> }}
-<form action="/jwt/register" method="post">
-  <label for="first_name">Nombre</label>
-  <input type="text" name="first_name" id="first_name" />
-  <label for="last_name">Apellido</label>
-  <input type="text" name="last_name" id="last_name" />
+
+<form action="/api/auth/jwtRegister" method="post">
+  <label for="firstName">Nombre</label>
+  <input type="text" name="firstName" id="firstName" />
+  <label for="lastName">Apellido</label>
+  <input type="text" name="lastName" id="lastName" />
   <label for="email">Email</label>
   <input type="email" name="email" id="email" />
   <label for="age">Edad</label>
