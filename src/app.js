@@ -10,6 +10,8 @@ import "./persistence/MongoDB/configMongo.js";
 import config from "./config.js";
 import { __dirname } from "./utils/path.utils.js";
 import { hbs } from "./utils/handlebars.util.js";
+import swaggerUi from "swagger-ui-express";
+import { swaggerSetup } from "./swaggerSpecs.js";
 //Routes imports -------------------------------------------
 import indexRouter from "./routes/index.router.js";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
@@ -60,6 +62,7 @@ app.use("/api/users/", indexRouter.users);
 app.use("/api/auth", indexRouter.auth);
 // app.use("/api/sessions", indexRouter.session);
 app.use("/views", indexRouter.views);
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSetup));
 
 app.use(errorMiddleware);
 

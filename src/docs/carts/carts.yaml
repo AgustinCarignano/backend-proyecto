@@ -1,0 +1,348 @@
+paths:
+  /api/carts:
+    post:
+      summary: Create a new cart in database and Returns the cart id to the user.
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: New cart.
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+        "500":
+          description: Server error
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Server_error"
+  /api/carts/{cid}:
+    get:
+      summary: Returns a cart with the specified id
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Cart identifier
+          example: 6460ee21d5a231b20a35fbdb
+      responses:
+        "200":
+          description: One cart
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Populate_Cart"
+        "400":
+          description: Missing or incorrect data
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Bad_request"
+        "500":
+          description: Internal server error
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Server_error"
+    put:
+      summary: Update a cart and returns it.
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Cart identifier
+          example: 6460ee21d5a231b20a35fbdb
+      responses:
+        "200":
+          description: The updated cart
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+        "400":
+          description: Missing or incorrect data
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Bad_request"
+        "500":
+          description: Server error
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Server_error"
+    delete:
+      summary: Delete all products from a cart
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Cart identifier
+          example: 6460ee21d5a231b20a35fbdb
+      responses:
+        "200":
+          description: The products has been deleted. The cart is clean
+          content:
+            aplication/json:
+              example:
+                message: Eliminados todos los productos del carrito con id {cid}
+                id: 6460ee23d5a231b20a35fbf7
+        "400":
+          description: Missing or incorrect data
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Bad_request"
+        "403":
+          description: Unauthorized
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Unauthorized"
+        "500":
+          description: Internal server error
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Server_error"
+  /api/carts/{cid}/product/{pid}:
+    post:
+      summary: Add a product into a cart
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Cart identifier
+          example: 6460ee21d5a231b20a35fbdb
+        - name: pid
+          in: path
+          required: true
+          description: Product identifier
+          example: 6460ee23d5a231b20a35fbf7
+      responses:
+        "200":
+          description: Add a product into a cart
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+        "400":
+          description: Missing or incorrect data
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Bad_request"
+        "403":
+          description: Unauthorized
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Unauthorized"
+        "500":
+          description: Internal server error
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Server_error"
+    put:
+      summary: Update a product into a cart
+      tags:
+        - Carts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              quantity:
+                type: string
+                example: 4
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Cart identifier
+          example: 6460ee21d5a231b20a35fbdb
+        - name: pid
+          in: path
+          required: true
+          description: Product identifier
+          example: 6460ee23d5a231b20a35fbf7
+      responses:
+        "200":
+          description: Products updated
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+        "400":
+          description: Missing or incorrect data
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Bad_request"
+        "403":
+          description: Unauthorized
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Unauthorized"
+        "500":
+          description: Internal server error
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Server_error"
+    delete:
+      summary: Delete the specified cart and returns its id
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Cart identifier
+          example: 6460ee21d5a231b20a35fbdb
+        - name: pid
+          in: path
+          required: true
+          description: Product identifier
+          example: 6460ee23d5a231b20a35fbf7
+      responses:
+        "200":
+          description: Products deleted
+          content:
+            aplication/json:
+              schema:
+                message: Eliminado el producto con el id {pid} del carrito
+                id: "#/components/schemas/Cart"
+        "400":
+          description: Missing or incorrect data
+          content:
+            aplication/json:
+              example:
+                message: Missing or incorrect data
+                id: 6460ee23d5a231b20a35fbf7
+        "403":
+          description: Unauthorized
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Unauthorized"
+        "500":
+          description: Internal server error
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Server_error"
+  /api/carts/:cid/purchase:
+    get:
+      summary: Check the availability of products in a cart and generate a sales ticket
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: cart identifier
+          example: 6460ee21d5a231b20a35fbdb
+      responses:
+        "200":
+          description: Checked put
+          content:
+            aplication/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: There are some products out of stock
+                  ticket:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: "T-737150513163"
+                      purchase_datatime:
+                        type: Date
+                        example: "2023-04-20T19:22:14.124+00:00"
+                      amount:
+                        type: number
+                        example: 580
+                      purchaser:
+                        type: string
+                        example: example@gmail.com
+        "400":
+          description: Missing or incorrect data
+          content:
+            aplication/json:
+              example:
+                message: Missing or incorrect data
+                id: 6460ee23d5a231b20a35fbf7
+        "403":
+          description: Unauthorized
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Unauthorized"
+        "500":
+          description: Internal server error
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Server_error"
+
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        id:
+          type: string
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              product:
+                type: string
+              quantity:
+                type: number
+    Populate_Cart:
+      type: object
+      properties:
+        id:
+          type: string
+        products:
+          type: array
+          items:
+            $ref: "#/components/schemas/Product"
+      example:
+        id: 6460ee21d5a231b20a35fbdb
+        products:
+          [
+            product:
+              {
+                _id: 6460ee23d5a231b20a35fbf7,
+                title: Oriental Plastic Cheese,
+                description: The Football Is Good For Training And Recreational Purposes,
+                price: 475,
+                thumbnail:
+                  [https://loremflickr.com/640/480?lock=893848708448256],
+                code: 58634-9828,
+                stock: 271,
+                status: true,
+                category: Food,
+                owner: admin,
+                __v: 0,
+              },
+            quantity: 3,
+          ]
