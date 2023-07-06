@@ -1,37 +1,25 @@
 const btn = document.getElementById("addToCart");
 const div = document.getElementById("linkToCart");
-let usuario = null;
-const usuarios = [];
+existLink = false;
 
 btn.onclick = async () => {
-  await fetch(`/api/carts/63ee08dedfd48a7e16da594d/product/${btn.name}`, {
+  const { product_id, cart_id } = btn.dataset;
+  const res = await fetch(`/api/carts/${cart_id}/product/${product_id}`, {
     method: "POST",
     headers: {
       "content-Type": "application/json",
     },
   });
-  const anchor = document.createElement("a");
-  anchor.innerHTML = `<a href="/carts/63ee08dedfd48a7e16da594d">Ver Carrito<a>`;
-  div.appendChild(anchor);
-};
-/* btn.onclick = async () => {
-  const dataNewCart = await fetch("/api/carts/", {
-    method: "POST",
-    headers: {
-      "content-Type": "application/json",
-    },
-  });
-  const respNewCart = await dataNewCart.json();
-  const newCart = respNewCart.cart;
-  const cartId = newCart._id;
+  if (res.status === 403) {
+    alert(
+      "You are the owner of this product and you cannot add it to your cart"
+    );
+  }
 
-  await fetch(`/api/carts/${cartId}/product/${btn.name}`, {
-    method: "POST",
-    headers: {
-      "content-Type": "application/json",
-    },
-  });
-  div.innerHTML = `
-  <a href="/carts/${cartId}">Ver Carrito<a>
-  `;
-}; */
+  if (!existLink) {
+    const anchor = document.createElement("a");
+    anchor.innerHTML = `<a href="/views/carts/${cart_id}">Ver Carrito<a>`;
+    div.appendChild(anchor);
+    existLink = true;
+  }
+};

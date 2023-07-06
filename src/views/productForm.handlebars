@@ -1,0 +1,127 @@
+<div class="flexContainer">
+  <a class="linksTo" href="/views/products">Home</a>
+  <a class="linksTo" href="/views/clientArea">Area Personal</a>
+</div>
+{{#if product}}
+  <form class="productForm" id="updateProduct" data-pid={{product._id}}>
+    <div>
+      <label for="title">Nombre del producto</label>
+      <input
+        class="productForm_input"
+        type="text"
+        name="title"
+        id="title"
+        value={{product.title}}
+      />
+    </div>
+    <div>
+      <label for="price">Precio</label>
+      <input
+        class="productForm_input"
+        type="text"
+        name="price"
+        id="price"
+        value={{product.price}}
+      />
+    </div>
+    <div>
+      <label for="thumbnail">Url de la imagen</label>
+      <input
+        class="productForm_input"
+        type="text"
+        name="thumbnail"
+        id="thumbnail"
+        value={{product.thumbnail}}
+      />
+    </div>
+    <div>
+      <label for="code">Código de producto</label>
+      <input
+        class="productForm_input"
+        type="text"
+        name="code"
+        id="code"
+        value={{product.code}}
+      />
+    </div>
+    <div>
+      <label for="stock">Stock</label>
+      <input
+        class="productForm_input"
+        type="text"
+        name="stock"
+        id="stock"
+        value={{product.stock}}
+      />
+    </div>
+    <div>
+      <label for="category">Categoría</label>
+      <input
+        class="productForm_input"
+        type="text"
+        name="category"
+        id="category"
+        value={{product.category}}
+      />
+    </div>
+    <div>
+      <label for="description">Descripción</label>
+      <textarea
+        class="productForm_input"
+        name="description"
+        id="description"
+        rows="5"
+      >{{product.description}}</textarea>
+    </div>
+    <input class="productForm_btn" type="submit" value="ACTUALIZAR" />
+  </form>
+{{else}}
+  <form class="productForm" id="createProduct">
+    <div>
+      <label for="title">Nombre del producto</label>
+      <input class="productForm_input" type="text" name="title" id="title" />
+    </div>
+    <div>
+      <label for="price">Precio</label>
+      <input class="productForm_input" type="text" name="price" id="price" />
+    </div>
+    <div>
+      <label for="thumbnail">Url de la imagen</label>
+      <input
+        class="productForm_input"
+        type="text"
+        name="thumbnail"
+        id="thumbnail"
+      />
+    </div>
+    <div>
+      <label for="code">Código de producto</label>
+      <input class="productForm_input" type="text" name="code" id="code" />
+    </div>
+    <div>
+      <label for="stock">Stock</label>
+      <input class="productForm_input" type="text" name="stock" id="stock" />
+    </div>
+    <div>
+      <label for="category">Categoría</label>
+      <input
+        class="productForm_input"
+        type="text"
+        name="category"
+        id="category"
+      />
+    </div>
+    <div>
+      <label for="description">Descripción</label>
+      <textarea
+        class="productForm_input"
+        name="description"
+        id="description"
+        rows="5"
+      ></textarea>
+    </div>
+    <input type="text" name="status" id="status" value="true" hidden />
+    <input class="productForm_btn" type="submit" value="CARGAR" />
+  </form>
+{{/if}}
+<script src="/productForm.js"></script>

@@ -1,0 +1,300 @@
+paths:
+  /api/products:
+    get:
+      summary: Return an array of all products
+      tags:
+        - Products
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: The numbers of items to return
+          default: 10
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: The page to return, depends on the limit
+          default: 1
+        - in: query
+          name: sort
+          schema:
+            type: string
+          description: sort the resturns array. The value has to match with one key value of the schema
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: an specific query to filter the returns data
+      responses:
+        "200":
+          description: All products and paginate information
+          content:
+            aplication/json:
+              example:
+                status: success
+                payload:
+                  [
+                    {
+                      _id: 6460ee23d5a231b20a35fbf7,
+                      title: Oriental Plastic Cheese,
+                      description: The Football Is Good For Training And Recreational Purposes,
+                      price: 475,
+                      thumbnail:
+                        [https://loremflickr.com/640/480?lock=893848708448256],
+                      code: 58634-9828,
+                      stock: 271,
+                      status: true,
+                      category: Food,
+                      owner: admin,
+                      __v: 0,
+                    },
+                  ]
+                totalPages: 10
+                prevPage: 4
+                nextPage: 6
+                page: 5
+                hasPrevPage: true
+                hasNextPage: true
+                prevLink: /api/products?page=4
+                nextLink: /api/products?page=6
+        "500":
+          description: Server error
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Server_error"
+    post:
+      summary: Create a new product and returns it if its has been stored correctly
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "200":
+          description: New product
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "400":
+          description: Missing or incorrect data
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Bad_request"
+        "403":
+          description: Unauthorized
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Unauthorized"
+        "500":
+          description: Internal server error
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Server_error"
+  /api/products/{pid}:
+    get:
+      summary: Returns a product with the specified id
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: Product identifier
+          example: 6460ee23d5a231b20a35fbf7
+      responses:
+        "200":
+          description: One product
+          content:
+            aplication/jason:
+              example:
+                status: success
+                product:
+                  {
+                    _id: 6460ee23d5a231b20a35fbf7,
+                    title: Oriental Plastic Cheese,
+                    description: The Football Is Good For Training And Recreational Purposes,
+                    price: 475,
+                    thumbnail:
+                      [https://loremflickr.com/640/480?lock=893848708448256],
+                    code: 58634-9828,
+                    stock: 271,
+                    status: true,
+                    category: Food,
+                    owner: admin,
+                    __v: 0,
+                  }
+        "400":
+          description: Missing or incorrect data
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Bad_request"
+        "500":
+          description: Internal server error
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Server_error"
+    put:
+      summary: Update the specified product and returns it
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: Product identifier
+          example: 6460ee23d5a231b20a35fbf7
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+            example: { price: 475, stock: 271 }
+      responses:
+        "200":
+          description: updated product
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "400":
+          description: Missing or incorrect data
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Bad_request"
+        "403":
+          description: Unauthorized
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Unauthorized"
+        "500":
+          description: Internal server error
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Server_error"
+    delete:
+      summary: Delete the specified product and returns its id
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          description: Product identifier
+          example: 6460ee23d5a231b20a35fbf7
+      responses:
+        "200":
+          description: The product has been succesfully deleted
+          content:
+            aplication/json:
+              example:
+                message: producto eliminado con éxito
+                id: 6460ee23d5a231b20a35fbf7
+        "400":
+          description: Missing or incorrect data
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Bad_request"
+        "403":
+          description: Unauthorized
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Unauthorized"
+        "500":
+          description: Internal server error
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/Server_error"
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 6460ee23d5a231b20a35fbf7
+        title:
+          type: string
+          example: Oriental Plastic Cheese
+        description:
+          type: string
+          example: The Football Is Good For Training And Recreational Purposes,
+        price:
+          type: number
+          example: 475
+        thumbnail:
+          type: array
+          items:
+            type: string
+          example: ["https://loremflickr.com/640/480?lock=893848708448256"]
+        code:
+          type: string
+          example: 58634-9828
+        stock:
+          type: number
+          example: 271
+        status:
+          type: boolean
+          example: true
+        category:
+          type: string
+          example: Food
+        owner:
+          type: string
+          example: admin
+    Unauthorized:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Unauthorized to get access to this endpoint
+    Bad_request:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Error during processing the request
+        message:
+          type: string
+          example: We can't found an item with that id. Please, check the request params
+        cause:
+          type: string
+          example: 404-Resource not found
+    Server_error:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Process error
+        message:
+          type: string
+          example: An error has occurred when trying to process the request
+        cause:
+          type: string
+          example: 500-Internal server error
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: client_token
+
+security:
+  - cookieAuth: []

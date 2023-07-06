@@ -1,0 +1,18 @@
+<div class="registerPage">
+  <h3>Complete el siguiente formulario para registrarse</h3>
+
+  <form action="/api/auth/register" method="post" class="registerPage_form">
+    <label for="firstName">Nombre</label>
+    <input type="text" name="firstName" id="firstName" />
+    <label for="lastName">Apellido</label>
+    <input type="text" name="lastName" id="lastName" />
+    <label for="email">Email</label>
+    <input type="email" name="email" id="email" />
+    <label for="age">Edad</label>
+    <input type="number" name="age" id="age" />
+    <label for="password">Contraseña</label>
+    <input type="password" name="password" id="password" />
+    <input type="submit" value="Registrase" />
+  </form>
+  <a href="/views/login">Volver a Login</a>
+</div>

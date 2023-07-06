@@ -1,4 +1,10 @@
-{{! <link rel="stylesheet" href="/newStyle.css" /> }}
+<div class="flexContainer">
+  {{#if cartId}}
+    <a href="/views/carts/{{cartId}}">Ver Carrito</a>
+  {{/if}}
+  <a href="/views/messages">Ir al chat</a>
+  <a class="linksTo" href="/views/clientArea">Área Personal</a>
+</div>
 <div class="detailContainer">
   {{#if render}}
     <h1>{{product.title}}</h1>
@@ -9,13 +15,19 @@
     <h4>Price</h4>
     <p>${{product.price}}</p>
     <div id="linkToCart">
-      <a href="/products">Página principal</a>
-      <button id="addToCart" name={{product.id}}>Add to cart</button>
+      <a href="/views/products">Página principal</a>
+      {{#if cartId}}
+        <button
+          id="addToCart"
+          data-product_id={{product._id}}
+          data-cart_id={{cartId}}
+        >Add to cart</button>
+      {{/if}}
     </div>
   {{else}}
     <h2>Error 404: El recurso al que intenta acceder no existe</h2>
     <div class="linkError">
-      <a href="/products">Home</a>
+      <a href="/views/products">Home</a>
     </div>
   {{/if}}
 </div>

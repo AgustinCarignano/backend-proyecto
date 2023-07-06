@@ -1,75 +1,80 @@
 import express from "express";
-import handlebars from "express-handlebars";
-import { Server } from "socket.io";
-import { __dirname } from "./utils.js";
-import "./dbConfig.js";
-import productsRouter from "./routes/products.router.js";
-import cartsRouter from "./routes/carts.router.js";
-import messagesRouter from "./routes/viewsRouter/messages.router.js";
-import productsViewRouter from "./routes/viewsRouter/products.router.js";
-import cartsViewRouter from "./routes/viewsRouter/carts.router.js";
-import { MessageManager } from "./dao/mongoManagers/MessageManager.js";
-
-import Handlebars from "handlebars";
-import { allowInsecurePrototypeAccess } from "@handlebars/allow-prototype-access";
+import session from "express-session";
+import MongoStore from "connect-mongo";
+import cookieParser from "cookie-parser";
+import passport from "passport";
+import cors from "cors";
+import "express-async-errors";
+import "./middlewares/passport.middleware.js";
+import "./persistence/MongoDB/configMongo.js";
+import config from "./config.js";
+import { __dirname } from "./utils/path.utils.js";
+import { hbs } from "./utils/handlebars.util.js";
+import swaggerUi from "swagger-ui-express";
+import { swaggerSetup } from "./swaggerSpecs.js";
+//Routes imports -------------------------------------------
+import indexRouter from "./routes/index.router.js";
+import { errorMiddleware } from "./middlewares/error.middleware.js";
+import { logger } from "./utils/winston.js";
 
 const app = express();
-const PORT = 8080;
+const PORT = config.port;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(`${__dirname}/public`));
 
-//handlebars
-// app.engine("handlebars", handlebars.engine());
-//Modificacion del motor para que me permita generar las vistas.
-app.engine(
-  "handlebars",
-  handlebars.engine({
-    defaulyLayout: "main",
-    handlebars: allowInsecurePrototypeAccess(Handlebars),
-  })
-);
+//Views --------------------------------------------------
+app.engine("handlebars", hbs.engine);
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "handlebars");
 
-//routes
-app.use("/api/products/", productsRouter);
-app.use("/api/carts/", cartsRouter);
-app.use("/messages", messagesRouter);
-app.use("/carts", cartsViewRouter);
-app.use("/products", productsViewRouter);
+//Cookies ------------------------------------------------
+const COOKIE_KEY = config.cookieKey;
+app.use(cookieParser(COOKIE_KEY));
 
-const httpServer = app.listen(PORT, () => {
-  console.log(`Escuchando al puerto ${PORT}`);
+//Session ------------------------------------------------
+const URI = config.uri;
+const SESSION_KEY = config.sessionKey;
+app.use(
+  session({
+    store: new MongoStore({
+      mongoUrl: URI,
+    }),
+    resave: false,
+    saveUninitialized: false,
+    secret: SESSION_KEY,
+    cookie: { maxAge: 86400000 },
+  })
+);
+
+//Passport ------------------------------------------------
+app.use(passport.initialize());
+app.use(passport.session());
+
+//Cors ----------------------------------------------------
+app.use(cors());
+
+//Routes --------------------------------------------------
+app.use("/api/carts/", indexRouter.carts);
+app.use("/api/products/", indexRouter.products);
+app.use("/api/users/", indexRouter.users);
+app.use("/api/auth", indexRouter.auth);
+// app.use("/api/sessions", indexRouter.session);
+app.use("/views", indexRouter.views);
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSetup));
+
+app.use(errorMiddleware);
+
+app.get("/", (_req, res) => {
+  res.redirect("/views/login");
+});
+app.get("/*", (_req, res) => {
+  res.render("errorUrl", { errorCode: "404", errorMessage: "Invalid URL" });
 });
 
-//socket server
-const socketServer = new Server(httpServer);
-const messageManager = new MessageManager();
-
-socketServer.on("connection", async (socket) => {
-  console.log(`Cliente conectado. ID: ${socket.id}`);
-  socket.emit("bienvenida", {
-    message: "Conectado al servidor",
-  });
-
-  socket.on("disconnect", () => {
-    console.log(`Cliente desconectado. ID: ${socket.id}`);
-  });
-
-  socket.on("nuevoIngreso", async (user) => {
-    socket.broadcast.emit("nuevoIngreso", user);
-    socket.emit("chat", await messageManager.getMessages());
-  });
-
-  socket.on("chat", async (msjObj) => {
-    const newMessages = await messageManager.savedMessages(msjObj);
-    socketServer.emit("chat", newMessages);
-  });
-
-  socket.on("clean", async () => {
-    const newMessages = await messageManager.cleanHisotry();
-    socketServer.emit("chat", newMessages);
-  });
+export const httpServer = app.listen(PORT, () => {
+  logger.info(`Escuchando al puerto ${PORT}`);
 });
+
+import("./controllers/messages.controller.js");

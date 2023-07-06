@@ -1,0 +1,45 @@
+<div class="flexContainer">
+  <a class="linksTo" href="/views/products">Home</a>
+</div>
+<div class="adminPanel">
+  <h1 class="adminPanel_title">Panel de administracion</h1>
+  <h2 class="adminPanel_subtitle">Lista de Usuarios</h2>
+  <div class="adminPanel_items">
+    <p><strong>Nombre completo</strong></p>
+    <p><strong>Role</strong></p>
+    <p><strong>Ultima conexion</strong></p>
+    <p><strong>Accion</strong></p>
+    {{#each users}}
+      <p>{{fullName}}</p>
+      <p>{{role}}</p>
+      {{#if (isInactive last_connection)}}
+        <p class="inactiveCount">{{formatDate last_connection}}</p>
+      {{else}}
+        <p>{{formatDate last_connection}}</p>
+      {{/if}}
+      <button class="deleteUser" data-uid={{id}}>Eliminar</button>
+    {{/each}}
+  </div>
+  {{#if (totalInactives users)}}
+    <div class="adminPage_deleteUsers">
+      <p>Eliminar cuentas inactivas ({{totalInactives users}})</p>
+      <button id="deleteInactiveUsers">Eliminar todas</button>
+    </div>
+  {{/if}}
+  <h2 class="adminPanel_subtitle">Lista de Productos</h2>
+  <div class="adminPanel_products">
+    <p><strong>Titulo</strong></p>
+    <p><strong>Codigo</strong></p>
+    <p><strong>Stock</strong></p>
+    <p><strong>Propietario</strong></p>
+    <p><strong>Accion</strong></p>
+    {{#each products}}
+      <p>{{title}}</p>
+      <p>{{code}}</p>
+      <p>{{stock}}</p>
+      <p>{{owner}}</p>
+      <button class="deleteProduct" data-pid={{_id}}>Eliminar</button>
+    {{/each}}
+  </div>
+</div>
+<script src="/adminPanel.js"></script>
