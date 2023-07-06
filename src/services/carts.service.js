@@ -52,6 +52,9 @@ class CartsService {
       return error;
     }
   }
+  async deleteProducts(pid) {
+    await cartsDAO.deleteProductsByProductId(pid);
+  }
   async cleanCart(cid) {
     try {
       const cart = await cartsDAO.deleteProducts(cid);

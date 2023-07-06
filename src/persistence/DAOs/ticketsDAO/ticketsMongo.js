@@ -12,6 +12,10 @@ class TicketsMongo {
       throw new Error(error.message);
     }
   }
+  async getTicketsByPurchaser(email) {
+    const tickets = await this.model.find({ purchaser: email }).lean();
+    return tickets;
+  }
   async generateTicket(code, totalPrice, userEmail) {
     try {
       const newTicket = await this.model.create({

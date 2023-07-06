@@ -6,18 +6,6 @@ import { isAdmin } from "../middlewares/auth.middleware.js";
 const router = Router();
 
 router.get(
-  "/facebookRegister",
-  passport.authenticate("facebook", { scope: "email" })
-);
-router.get(
-  "/facebookCallback",
-  passport.authenticate("facebook", {
-    failureRedirect: "/views/errorRegister",
-  }),
-  authController.facebookCallback
-);
-
-router.get(
   "/githubRegister",
   passport.authenticate("github", { scope: ["user:email"] })
 );
@@ -29,8 +17,27 @@ router.get(
   authController.githubCallback
 );
 
-router.post("/jwtRegister", authController.jwtRegister);
+router.post(
+  "/register",
+  passport.authenticate("register", {
+    failureRedirect: "/views/register/errorRegister",
+  }),
+  authController.localRegister
+);
 
-router.post("/jwtLogin", isAdmin, authController.jwtLogin);
+router.post(
+  "/login",
+  isAdmin,
+  passport.authenticate("login", {
+    failureRedirect: "/views/login/errorLogin",
+  }),
+  authController.login
+);
+
+router.get("/logout", authController.logout);
+
+router.post("/recovery", authController.passRecover);
+
+router.post("/recovery/newPassword", authController.newPassword);
 
 export default router;

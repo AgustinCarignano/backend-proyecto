@@ -1,0 +1,27 @@
+<div class="flexContainer">
+  <a class="linksTo" href="/views/products">Home</a>
+  <a class="linksTo" href="/views/clientArea">Área Personal</a>
+</div>
+<div class="checkout">
+  <h1 class="checkout_title">Proceso de compra</h1>
+  <h2 class="checkout_subtitle">Detalles del carrito</h2>
+  <div class="checkout_items">
+    <div class="checkout_items_item">
+      <p><strong>Producto</strong></p>
+      <p><strong>Precio</strong></p>
+      <p><strong>Cantidad</strong></p>
+      <p><strong>Subtotal</strong></p>
+    </div>
+    {{#each cart.products}}
+      <div class="checkout_items_item">
+        <p>{{product</p>
+      </div>
+    {{/each}}
+
+    <h4 class="checkout_items_total">Total del carrito: </h4>
+    <div class="checkout_items_buttons">
+      <button>Comprar</button>
+      <button>Volver</button>
+    </div>
+  </div>
+</div>

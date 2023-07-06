@@ -6,7 +6,7 @@ class SessionController {
   async openSession(req, res) {
     res.cookie(
       "userSession",
-      { name: req.user.fullName, rol: "user" },
+      { name: req.user.fullName, role: req.user.role },
       { signed: true }
     );
     req.session.logged = true;

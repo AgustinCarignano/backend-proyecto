@@ -1,4 +1,8 @@
+import cartsService from "../services/carts.service.js";
 import productsService from "../services/products.service.js";
+import CustomError from "../utils/errors/customError.utils.js";
+import { ErrorEnums } from "../utils/errors/errors.enums.js";
+import { transporter } from "../utils/nodemailer.utils.js";
 
 class ProductsController {
   async getProducts(req, res) {
@@ -50,48 +54,78 @@ class ProductsController {
       res.status(404).json({ status: "error", error: error.message });
     }
   }
-  async getProductById(req, res) {
+  async getProductById(req, res, next) {
     const { pid } = req.params;
     try {
       const product = await productsService.getProductById(pid);
+      if (product instanceof Error) {
+        CustomError.generateError(ErrorEnums.NOT_FOUND);
+      }
       res.json({ status: "success", product });
     } catch (error) {
-      res.status(404).json({ error: error.message });
+      next(error);
     }
   }
-  async addProduct(req, res) {
+  async addProduct(req, res, next) {
     const newProduct = req.body;
+    const { email } = req.user;
     try {
-      const product = await productsService.addProduct(newProduct);
+      const product = await productsService.addProduct({
+        ...newProduct,
+        owner: email,
+      });
+      if (product instanceof Error) {
+        CustomError.generateError(ErrorEnums.MISSING_VALUES);
+      }
       res.status(200).json({
         message: "Producto cargado con éxito",
         product,
       });
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      next(error);
     }
   }
-  async updateProduct(req, res) {
-    const { pid } = req.params;
-    const product = req.body;
+  async updateProduct(req, res, next) {
     try {
-      const newProduct = await productsService.updateProduct(pid, product);
+      const { pid } = req.params;
+      const { email } = req.user;
+      const { isAdmin } = req.session;
+      const newProduct = req.body;
+      const product = await productsService.getProductById(pid);
+      if (!isAdmin && email !== product.owner)
+        CustomError.generateError(ErrorEnums.UNAUTHORIZED);
+      const updatedProduct = await productsService.updateProduct(pid, {
+        ...product,
+        ...newProduct,
+      });
+      if (product instanceof Error) {
+        CustomError.generateError(ErrorEnums.MISSING_VALUES);
+      }
       res.status(200).json({
         message: "Producto modificado con éxito",
-        newProduct,
+        updatedProduct,
       });
     } catch (error) {
-      res.status(404).json({ error: error.message });
+      next(error);
     }
   }
   async deleteProduct(req, res) {
-    try {
-      const { pid } = req.params;
-      const id = await productsService.deleteProduct(pid);
-      res.status(200).json({ message: "producto eliminado con éxito", id });
-    } catch (error) {
-      res.status(404).json({ error: error.message });
+    const { pid } = req.params;
+    const product = await productsService.deleteProduct(pid);
+    await cartsService.deleteProducts(pid);
+    if (product instanceof Error) {
+      CustomError.generateError(ErrorEnums.MISSING_VALUES);
     }
+    const mailContent = {
+      from: "CoderBackend",
+      subject: "Producto eliminado",
+      to: product.owner,
+      html: `<p>Se ha eliminado el producto ${product.title} con el codigo ${product.code}</p>`,
+    };
+    await transporter.sendMail(mailContent);
+    res
+      .status(200)
+      .json({ message: "producto eliminado con éxito", id: product.id });
   }
 }
 

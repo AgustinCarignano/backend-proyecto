@@ -72,6 +72,22 @@ class CartsMongo {
     cart.save();
     return cart;
   }
+  async deleteProductsByProductId(pid) {
+    const carts = await cartsModel.find({
+      "products.product": pid,
+    });
+    for (let i = 0; i < carts.length; i++) {
+      const index = carts[i].products.findIndex(
+        (item) => item.product.toString() === pid
+      );
+      carts[i].products.splice(index, 1);
+      carts[i].save();
+    }
+  }
+  async deleteCarts(cartIds) {
+    const resp = await cartsModel.deleteMany({ _id: cartIds });
+    return resp;
+  }
 }
 
 export default new CartsMongo();

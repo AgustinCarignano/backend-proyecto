@@ -5,6 +5,7 @@ export default class UserReqDTO {
     this.email = user.email;
     this.age = user.age;
     this.password = user.password;
+    this.role = user.role;
     this.cart = user.cart;
   }
 }

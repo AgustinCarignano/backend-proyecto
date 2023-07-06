@@ -1,17 +1,18 @@
 import { Server } from "socket.io";
 import { httpServer } from "../app.js";
 import messageService from "../services/messages.service.js";
+import { logger } from "../utils/winston.js";
 
 const socketServer = new Server(httpServer);
 
 socketServer.on("connection", async (socket) => {
-  console.log(`Cliente conectado. ID: ${socket.id}`);
+  logger.info(`Cliente conectado. ID: ${socket.id}`);
   socket.emit("bienvenida", {
     message: "Conectado al servidor",
   });
 
   socket.on("disconnect", () => {
-    console.log(`Cliente desconectado. ID: ${socket.id}`);
+    logger.info(`Cliente desconectado. ID: ${socket.id}`);
   });
 
   socket.on("nuevoIngreso", async (user) => {

@@ -1,27 +1,46 @@
+<div class="flexContainer">
+  <a class="linksTo" href="/views/products">Home</a>
+  <a class="linksTo" href="/views/clientArea">Área Personal</a>
+</div>
 <div class="cartContainer">
   {{#if render}}
-    <h1>Carrito</h1>
-    <h3>Identificador</h3>
-    <p>{{cart._id}}</p>
-    <div class="" id="cartList">
-      <h3>Productos</h3>
-      <div class="grid">
-        <h4>Nombre</h4>
-        <h4>Cantidad</h4>
-        <h4>Precio</h4>
-        {{#each cart.products}}
-          <p>{{product.title}}</p>
-          <p>{{quantity}}</p>
-          <p>{{product.price}}</p>
-        {{/each}}
+    <h1 class="cart_title">Carrito</h1>
+    <h3 class="cart_subtitle">Identificador</h3>
+    <p class="cart_detail">{{cart._id}}</p>
+    {{#if cart.products}}
+      <div class="">
+        <div id="cartList" class="checkout_items">
+          <h2 class="cart_subtitle">Detalles del carrito</h2>
+          <div class="checkout_items_item">
+            <p><strong>Producto</strong></p>
+            <p><strong>Precio</strong></p>
+            <p><strong>Cantidad</strong></p>
+            <p><strong>Subtotal</strong></p>
+          </div>
+          {{#each cart.products}}
+            <div class="checkout_items_item">
+              <p>{{product.title}}</p>
+              <p>${{product.price}}</p>
+              <p>{{quantity}}</p>
+              <p>${{subTotal product.price quantity}}</p>
+            </div>
+          {{/each}}
+          <h4 class="checkout_items_total">Total del carrito: ${{totalCart
+              cart.products
+            }}</h4>
+          <div class="checkout_items_buttons">
+            <button class="links" data-id={{cart._id}} id="cleanCart">Vaciar
+              Carrito</button>
+            <button class="links" id="checkOut" data-id={{cart._id}}>Finalizar
+              compra</button>
+          </div>
+        </div>
+        <div id="cartOutStock"></div>
+        <div id="cartTicket"></div>
       </div>
-      <a class="links" href="/views/products">Página principal</a>
-      <br />
-      <br />
-      <button class="links" id="checkOut" data-id={{cart._id}}>Finalizar compra</button>
-    </div>
-    <div id="cartOutStock"></div>
-    <div id="cartTicket"></div>
+    {{else}}
+      <p class="cart_emptyCart">No hay productos en el carrito</p>
+    {{/if}}
   {{else}}
     <h2>Error 404: El recurso al que intenta acceder no existe</h2>
     <div class="linkError">
@@ -29,4 +48,4 @@
     </div>
   {{/if}}
 </div>
-<script src="/checkOut.js"></script>
+<script src="/cartPage.js"></script>

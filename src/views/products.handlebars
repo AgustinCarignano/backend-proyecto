@@ -1,9 +1,22 @@
+<div class="flexContainer">
+  {{#if isAdmin}}
+    <a href="/views/adminPanel">Administrar</a>
+  {{else}}
+    <a href="/views/carts/{{user.cart}}">Ver Carrito</a>
+    <a href="/views/messages">Ir al chat</a>
+    <a class="linksTo" href="/views/clientArea">Área Personal</a>
+  {{/if}}
+  <a href="/api/auth/logout">Logout</a>
+</div>
 <div class="productContainer">
-  <p>Hola
-    <strong>{{user.name}}</strong>
-    <small>(rol: {{user.rol}})</small></p>
-  <br />
-  <a href="/api/sessions/logout">Logout</a>
+  {{#if isAdmin}}
+    <p><strong>Administrador</strong></p>
+  {{else}}
+    <p>Hola
+      <strong>{{user.fullName}}</strong>
+      <small>(role: {{user.role}})</small></p>
+    <br />
+  {{/if}}
   {{#if render}}
     <h1>Productos</h1>
     <div class="cardContainer">
@@ -27,12 +40,6 @@
     <h2>Error 404: El recurso al que intenta acceder no existe</h2>
     <div class="linkError">
       <a href="/views/products">Home</a>
-    </div>
-  {{/if}}
-  {{#if cartId}}
-    <div class="flexContainer">
-      <a href="/views/carts/{{cartId}}">Ver Carrito</a>
-      <a href="/views/messages">Ir al chat</a>
     </div>
   {{/if}}
 </div>

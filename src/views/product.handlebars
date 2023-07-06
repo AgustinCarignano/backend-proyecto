@@ -1,3 +1,10 @@
+<div class="flexContainer">
+  {{#if cartId}}
+    <a href="/views/carts/{{cartId}}">Ver Carrito</a>
+  {{/if}}
+  <a href="/views/messages">Ir al chat</a>
+  <a class="linksTo" href="/views/clientArea">Área Personal</a>
+</div>
 <div class="detailContainer">
   {{#if render}}
     <h1>{{product.title}}</h1>

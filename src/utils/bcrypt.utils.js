@@ -8,6 +8,5 @@ export const hashData = (data) =>
     if (err) return err;
     return hash;
   });
-//return bcrypt.hash(data, SALT);
 export const compareHashedData = (data, hashedData) =>
   bcrypt.compare(data, hashedData);
